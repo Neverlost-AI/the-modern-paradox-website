@@ -1,6 +1,6 @@
-# The Modern Paradox Website — V1 Draft
+# The Modern Paradox Website — V1
 
-Static website draft for `themodernparadox.com`.
+Static website for `themodernparadox.com`.
 
 ## V1 structure
 
@@ -14,31 +14,31 @@ Static website draft for `themodernparadox.com`.
 
 ## Audio
 
-The six web MP3 files were converted from the approved WAV masters at 96 kbps mono and are stored in:
+The site is wired to six approved web MP3s in `assets/audio/part-iv/`. The binary MP3 files are prepared locally from the WAV masters at 96 kbps mono. See the audio folder README for the exact filenames.
 
-`assets/audio/part-iv/`
+The WAV masters remain outside the public website repository.
 
-The WAV masters should remain outside the public website repository unless archival storage is intentionally desired.
+## Visual identity
 
-## Design intent
+The site is intentionally literary/editorial rather than product/SaaS:
 
-The Modern Paradox should remain visually and conceptually distinct from Neverlost Systems:
-- restrained, literary presentation
-- philosophy first
-- no SaaS/product visual language
-- clear but limited cross-link to Neverlost Systems
+- warm cream: `#F7F3E9`
+- near-black ink: `#171512`
+- antique gold: `#A79567`
+- editorial wordmark as the V1 live identity
+- thin rules and centered diamond motifs
+- no card shadows or rounded product UI language
+
+The intersection mark remains the intended Modern Paradox symbol. A provisional corrected version is saved in Canva, but rejected traced/hand-built SVG versions are deliberately excluded from this deployment. The exact production mark will be swapped in after a clean master export. The spiral is reserved for Neverlost Academy.
 
 ## GitHub Pages
 
-This draft includes:
-- `.nojekyll`
-- `CNAME` set to `themodernparadox.com`
-
-After creating the repository, upload these files to the default branch and configure GitHub Pages to deploy from the branch root. DNS for the custom domain must also point to GitHub Pages before the domain will resolve.
+The repository includes `.nojekyll` and a `CNAME` for `themodernparadox.com`. GitHub Pages and DNS still need to be enabled/configured in repository/domain settings if they are not already active.
 
 ## V1 boundaries
 
 Not included yet:
+
 - public comments
 - student accounts
 - analytics
@@ -48,21 +48,3 @@ Not included yet:
 - moderation backend
 
 Those should be added only after real reader/classroom use provides evidence that they are needed.
-
-## Brand system
-
-V1 visual identity is intentionally literary/editorial rather than product/SaaS:
-
-- warm cream: `#F7F3E9`
-- near-black ink: `#171512`
-- antique gold: `#A79567`
-- editorial wordmark as the primary identity
-- gold intersection mark as the primary symbol
-- thin rules, centered diamond details, square editorial controls
-- no card shadows or rounded product UI language
-
-Vector assets live in:
-
-`assets/brand/`
-
-The intersection mark is path-based SVG traced from the approved reference artwork. The editorial wordmark is currently SVG text so the exact final typeface can remain adjustable; once the typeface is formally locked, the production wordmark should be converted to outlines.

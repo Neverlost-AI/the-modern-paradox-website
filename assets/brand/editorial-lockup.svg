@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 150" role="img" aria-label="The Modern Paradox">
+  <rect width="520" height="150" fill="none"/>
+  <text x="260" y="42" text-anchor="middle"
+        font-family="Georgia, Times New Roman, serif"
+        font-size="25" letter-spacing="9" fill="#171512">THE MODERN</text>
+  <line x1="90" y1="65" x2="236" y2="65" stroke="#A79567" stroke-width="1.5"/>
+  <rect x="255" y="60" width="10" height="10" transform="rotate(45 260 65)" fill="#A79567"/>
+  <line x1="284" y1="65" x2="430" y2="65" stroke="#A79567" stroke-width="1.5"/>
+  <text x="260" y="122" text-anchor="middle"
+        font-family="Georgia, Times New Roman, serif"
+        font-size="50" letter-spacing="10" fill="#171512">PARADOX</text>
+</svg>
