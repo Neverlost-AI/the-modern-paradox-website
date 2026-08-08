@@ -28,7 +28,7 @@ if (button && links) {
     '04': {
       title: 'Organizational Coherence: Demonstrated Value',
       hash: '#demonstrated-value',
-      src: '../../assets/audio/part-iv/04-organizational-coherence-demonstrated-value.mp3'
+      src: '../../assets/audio/part-iv/04-organizational-coherence-fragmentation.mp3'
     },
     '05': {
       title: 'Consciousness and Reorganization',
@@ -41,6 +41,9 @@ if (button && links) {
       src: '../../assets/audio/part-iv/06-coherence-operator-neverlost.mp3'
     }
   };
+
+  // Keep the canonical audio path for section 04 explicit.
+  TRACKS['04'].src = '../../assets/audio/part-iv/04-organizational-coherence-demonstrated-value.mp3';
 
   const HASH_TO_TRACK = Object.fromEntries(
     Object.entries(TRACKS).map(([track, data]) => [data.hash, track])
@@ -65,7 +68,7 @@ if (button && links) {
         savedAt: Date.now()
       }));
     } catch (_) {
-      // Read-along still works without session storage; only seamless handoff is lost.
+      // The pages still work without session storage; only cross-page handoff is lost.
     }
   };
 
@@ -75,15 +78,128 @@ if (button && links) {
     return match ? match[1] : null;
   };
 
+  const loadStylesheetOnce = (href, id) => {
+    if (document.getElementById(id)) return;
+    const stylesheet = document.createElement('link');
+    stylesheet.id = id;
+    stylesheet.rel = 'stylesheet';
+    stylesheet.href = href;
+    document.head.appendChild(stylesheet);
+  };
+
   const setupListeningPageHandoff = () => {
     const cards = Array.from(document.querySelectorAll('.audio-card'));
     if (!cards.length) return;
 
+    if (document.currentScript) {
+      loadStylesheetOnce(
+        new URL('../css/inline-reader.css', document.currentScript.src).href,
+        'tmp-inline-reader-css'
+      );
+    }
+
     let lastActiveCard = null;
+    let readerDocumentPromise = null;
+
+    const getReaderDocument = () => {
+      if (!readerDocumentPromise) {
+        const readerUrl = new URL('../read/part-iv/', window.location.href);
+        readerDocumentPromise = fetch(readerUrl, { credentials: 'same-origin' })
+          .then((response) => {
+            if (!response.ok) throw new Error(`Reader request failed: ${response.status}`);
+            return response.text();
+          })
+          .then((html) => new DOMParser().parseFromString(html, 'text/html'));
+      }
+      return readerDocumentPromise;
+    };
+
+    const setLinkState = (link, open) => {
+      link.setAttribute('aria-expanded', open ? 'true' : 'false');
+      link.textContent = open ? 'Hide reader ↑' : 'Read along ↓';
+    };
+
+    const closeInlineReader = (card) => {
+      const panel = card.querySelector('.inline-reader-panel');
+      const link = card.querySelector('a[href*="read/part-iv/"]');
+      if (panel) panel.hidden = true;
+      if (link) setLinkState(link, false);
+    };
+
+    const closeOtherReaders = (activeCard) => {
+      cards.forEach((card) => {
+        if (card !== activeCard) closeInlineReader(card);
+      });
+    };
+
+    const buildInlineReader = async (card, track, link) => {
+      let panel = card.querySelector('.inline-reader-panel');
+      if (panel) {
+        const opening = panel.hidden;
+        if (opening) closeOtherReaders(card);
+        panel.hidden = !opening;
+        setLinkState(link, opening);
+        return;
+      }
+
+      const originalLabel = link.textContent;
+      link.textContent = 'Loading reader…';
+      link.setAttribute('aria-busy', 'true');
+
+      try {
+        const readerDocument = await getReaderDocument();
+        const sectionId = TRACKS[track].hash.slice(1);
+        const sourceHeading = readerDocument.getElementById(sectionId);
+        if (!sourceHeading) throw new Error(`Reader section not found: ${sectionId}`);
+
+        panel = document.createElement('div');
+        panel.className = 'inline-reader-panel';
+        panel.setAttribute('role', 'region');
+        panel.setAttribute('aria-label', `${TRACKS[track].title} reader`);
+
+        const toolbar = document.createElement('div');
+        toolbar.className = 'inline-reader-toolbar';
+        toolbar.innerHTML = `
+          <div>
+            <div class="inline-reader-kicker">Read along · Section ${track}</div>
+            <div class="inline-reader-helper">The text below matches the recording above.</div>
+          </div>
+          <button class="inline-reader-close" type="button" aria-label="Close reader">Close</button>
+        `;
+
+        const body = document.createElement('div');
+        body.className = 'inline-reader-body';
+
+        let node = sourceHeading;
+        while (node && node.tagName !== 'HR') {
+          body.appendChild(node.cloneNode(true));
+          node = node.nextElementSibling;
+        }
+
+        panel.append(toolbar, body);
+        card.appendChild(panel);
+
+        toolbar.querySelector('.inline-reader-close').addEventListener('click', () => {
+          panel.hidden = true;
+          setLinkState(link, false);
+          link.focus({ preventScroll: true });
+        });
+
+        closeOtherReaders(card);
+        setLinkState(link, true);
+      } catch (_) {
+        // Preserve the existing full-reader link as a reliable fallback.
+        window.location.href = link.href;
+      } finally {
+        link.removeAttribute('aria-busy');
+        if (link.textContent === 'Loading reader…') link.textContent = originalLabel;
+      }
+    };
 
     cards.forEach((card) => {
       const audio = card.querySelector('audio');
       const track = trackFromCard(card);
+      const readerLink = card.querySelector('a[href*="read/part-iv/"]');
       if (!audio || !track) return;
 
       audio.addEventListener('play', () => {
@@ -93,11 +209,27 @@ if (button && links) {
       audio.addEventListener('timeupdate', () => {
         if (audio.currentTime > 0) lastActiveCard = card;
       });
+
+      if (readerLink) {
+        setLinkState(readerLink, false);
+        readerLink.addEventListener('click', (event) => {
+          event.preventDefault();
+          lastActiveCard = card;
+          writeStoredState({
+            track,
+            currentTime: Number.isFinite(audio.currentTime) ? audio.currentTime : 0,
+            shouldResume: !audio.paused && !audio.ended
+          });
+          buildInlineReader(card, track, readerLink);
+        });
+      }
     });
 
+    // The hero and bottom full-reader links still open the dedicated reader page.
     document.querySelectorAll('a[href*="read/part-iv/"]').forEach((readerLink) => {
+      if (readerLink.closest('.audio-card')) return;
       readerLink.addEventListener('click', () => {
-        const card = readerLink.closest('.audio-card') || lastActiveCard;
+        const card = lastActiveCard;
         if (!card) return;
 
         const audio = card.querySelector('audio');
@@ -119,10 +251,10 @@ if (button && links) {
     if (!readerNav || !reader) return;
 
     if (document.currentScript) {
-      const stylesheet = document.createElement('link');
-      stylesheet.rel = 'stylesheet';
-      stylesheet.href = new URL('../css/read-along.css', document.currentScript.src).href;
-      document.head.appendChild(stylesheet);
+      loadStylesheetOnce(
+        new URL('../css/read-along.css', document.currentScript.src).href,
+        'tmp-read-along-css'
+      );
     }
 
     const shell = document.createElement('div');
