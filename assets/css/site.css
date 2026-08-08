@@ -6,6 +6,8 @@
   --gold:#A79567;
   --gold-dark:#877348;
   --line:#D9CEB8;
+  --neverlost-blue:#1357d4;
+  --neverlost-blue-dark:#0d3e9d;
   --max:1120px;
   --reader:760px;
 }
@@ -115,6 +117,12 @@ main{min-height:70vh}
   height:auto;
   margin:0 auto;
 }
+.home-editorial-lockup{
+  display:block;
+  width:min(520px,100%);
+  height:auto;
+  margin:0 0 28px;
+}
 .eyebrow{
   text-transform:uppercase;
   letter-spacing:.17em;
@@ -185,6 +193,10 @@ h3{font-size:1.38rem}
 .button.primary:hover{background:var(--gold-dark);border-color:var(--gold-dark)}
 .button.soft{background:transparent;color:var(--ink)}
 .button.soft:hover{background:rgba(167,149,103,.10)}
+.button.reader-button{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.button.reader-button:hover{background:#2b2823;border-color:#2b2823;color:var(--paper)}
+.button.neverlost-button{background:var(--neverlost-blue);border-color:var(--neverlost-blue);color:#fff}
+.button.neverlost-button:hover{background:var(--neverlost-blue-dark);border-color:var(--neverlost-blue-dark);color:#fff}
 .section{
   width:min(var(--max),calc(100% - 64px));
   margin:auto;
@@ -290,8 +302,8 @@ audio{width:100%;height:38px}
 .reader-nav{
   position:sticky;
   top:86px;
-  background:rgba(239,232,216,.97);
-  border-bottom:1px solid var(--line);
+  background:var(--ink);
+  border-bottom:1px solid var(--ink);
   font-size:.74rem;
   letter-spacing:.08em;
   text-transform:uppercase;
@@ -306,8 +318,8 @@ audio{width:100%;height:38px}
   gap:22px;
   padding:11px 0;
 }
-.reader-nav a{text-decoration:none;color:var(--muted)}
-.reader-nav a:hover{color:var(--gold-dark)}
+.reader-nav a{text-decoration:none;color:rgba(255,252,244,.82)}
+.reader-nav a:hover{color:var(--gold)}
 .prompt-list{display:grid;gap:18px;margin-top:32px}
 .prompt{
   border-top:1px solid var(--line);
@@ -369,6 +381,7 @@ footer{
     gap:42px;
     padding:74px 0 68px;
   }
+  .home-editorial-lockup{width:min(460px,100%)}
   .hero-note{border-left:0;border-top:1px solid var(--gold);padding:22px 0 0}
   .hero-brand{min-height:220px}
   .grid{grid-template-columns:1fr}
