@@ -1,24 +1,23 @@
 # Part IV web audio
 
-Part IV is now organized as seven visible website sections in manuscript order:
+Part IV uses the final canonical seven-track structure:
 
-1. `01` — The Modern Übermensch and Systems
-2. `02` — The Übermensch as Operator
-3. `03` — The Window Before the System Hardens
-4. `04` — Organizational Coherence: Fragmentation
-5. `05` — Organizational Coherence: Demonstrated Value
-6. `06` — Consciousness and Reorganization
-7. `07` — Coherence, the Operator, and Neverlost
+1. `01-modern-ubermensch-and-systems.mp3` — The Modern Übermensch and Systems
+2. `02-ubermensch-as-operator.mp3` — The Übermensch as Operator
+3. `03-window-before-the-system-hardens.mp3` — The Window Before the System Hardens
+4. `04-the-operator.mp3` — The Operator
+5. `05-the-hospital.mp3` — The Hospital
+6. `06-consciousness-and-reorganization.mp3` — Consciousness and Reorganization
+7. `07-the-part-and-the-system.mp3` — The Part and the System
 
-## Current audio status
+These files correspond exactly to:
 
-- Section 01 continues to use `01-modern-ubermensch-and-systems.mp3`.
-- Section 02 is temporarily disabled on the website until its recording is regenerated from the revised text containing the expanded affordability sentence.
-- Section 03 is temporarily read-only until the new Window recording is generated.
-- Website Sections 04–07 reuse the previously approved recordings for old Sections 03–06 without changing their audio content:
-  - Section 04 → `03-organizational-coherence-fragmentation.mp3`
-  - Section 05 → `04-organizational-coherence-demonstrated-value.mp3`
-  - Section 06 → `05-consciousness-and-reorganization.mp3`
-  - Section 07 → `06-coherence-operator-neverlost.mp3`
+- `MODERN_PARADOX_PART_IV_MASTER_FINAL_2026-08-26.md`
+- `MODERN_PARADOX_PART_IV_SEVEN_SECTION_MAP_FINAL_2026-08-26.md`
 
-The approved web MP3 standard remains 96 kbps mono from the approved WAV masters. Once the new Section 02 and Section 03 masters are generated, the audio assets can be normalized to a clean seven-file naming scheme.
+The web audio standard is 96 kbps constant-rate mono MPEG Layer III, generated
+from the corresponding 24 kHz mono PCM-16 WAV masters. The public website
+repository contains the MP3 derivatives; the WAV masters remain outside it.
+
+Legacy six-section assets are retained temporarily for review and are not used
+by the canonical seven-track pages or JavaScript mapping.

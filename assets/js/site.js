@@ -18,34 +18,32 @@ if (button && links) {
     '02': {
       title: 'The Übermensch as Operator',
       hash: '#ubermensch-as-operator',
-      src: null,
-      pending: 'Audio refresh pending for the revised affordability passage'
+      src: '../../assets/audio/part-iv/02-ubermensch-as-operator.mp3'
     },
     '03': {
       title: 'The Window Before the System Hardens',
       hash: '#window-before-system-hardens',
-      src: null,
-      pending: 'New Window recording coming soon'
+      src: '../../assets/audio/part-iv/03-window-before-the-system-hardens.mp3'
     },
     '04': {
-      title: 'Organizational Coherence: Fragmentation',
-      hash: '#organizational-coherence',
-      src: '../../assets/audio/part-iv/03-organizational-coherence-fragmentation.mp3'
+      title: 'The Operator',
+      hash: '#the-operator',
+      src: '../../assets/audio/part-iv/04-the-operator.mp3'
     },
     '05': {
-      title: 'Organizational Coherence: Demonstrated Value',
-      hash: '#demonstrated-value',
-      src: '../../assets/audio/part-iv/04-organizational-coherence-demonstrated-value.mp3'
+      title: 'The Hospital',
+      hash: '#the-hospital',
+      src: '../../assets/audio/part-iv/05-the-hospital.mp3'
     },
     '06': {
       title: 'Consciousness and Reorganization',
       hash: '#consciousness-reorganization',
-      src: '../../assets/audio/part-iv/05-consciousness-and-reorganization.mp3'
+      src: '../../assets/audio/part-iv/06-consciousness-and-reorganization.mp3'
     },
     '07': {
-      title: 'Coherence, the Operator, and Neverlost',
-      hash: '#coherence-operator-neverlost',
-      src: '../../assets/audio/part-iv/06-coherence-operator-neverlost.mp3'
+      title: 'The Part and the System',
+      hash: '#part-and-system',
+      src: '../../assets/audio/part-iv/07-the-part-and-the-system.mp3'
     }
   };
 

@@ -5,7 +5,7 @@ Static website for `themodernparadox.com`.
 ## V1 structure
 
 - `/` — Home
-- `/part-iv/` — Part IV audio hub with six MP3 sections
+- `/part-iv/` — Part IV audio hub with seven MP3 sections
 - `/read/part-iv/` — continuous Part IV reader with section anchors
 - `/for-teaching/` — lightweight teaching/discussion layer
 - `/respond/` — structured response model; public submission infrastructure intentionally deferred
@@ -14,7 +14,7 @@ Static website for `themodernparadox.com`.
 
 ## Audio
 
-The site is wired to six approved web MP3s in `assets/audio/part-iv/`. The binary MP3 files are prepared locally from the WAV masters at 96 kbps mono. See the audio folder README for the exact filenames.
+The site is wired to seven approved web MP3s in `assets/audio/part-iv/`. The binary MP3 files are prepared locally from the WAV masters at 96 kbps mono. See the audio folder README for the exact filenames.
 
 The WAV masters remain outside the public website repository.
 
