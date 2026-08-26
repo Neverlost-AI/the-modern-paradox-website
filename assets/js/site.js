@@ -18,32 +18,36 @@ if (button && links) {
     '02': {
       title: 'The Übermensch as Operator',
       hash: '#ubermensch-as-operator',
-      src: '../../assets/audio/part-iv/02-ubermensch-as-operator.mp3'
+      src: null,
+      pending: 'Audio refresh pending for the revised affordability passage'
     },
     '03': {
+      title: 'The Window Before the System Hardens',
+      hash: '#window-before-system-hardens',
+      src: null,
+      pending: 'New Window recording coming soon'
+    },
+    '04': {
       title: 'Organizational Coherence: Fragmentation',
       hash: '#organizational-coherence',
       src: '../../assets/audio/part-iv/03-organizational-coherence-fragmentation.mp3'
     },
-    '04': {
+    '05': {
       title: 'Organizational Coherence: Demonstrated Value',
       hash: '#demonstrated-value',
-      src: '../../assets/audio/part-iv/04-organizational-coherence-fragmentation.mp3'
+      src: '../../assets/audio/part-iv/04-organizational-coherence-demonstrated-value.mp3'
     },
-    '05': {
+    '06': {
       title: 'Consciousness and Reorganization',
       hash: '#consciousness-reorganization',
       src: '../../assets/audio/part-iv/05-consciousness-and-reorganization.mp3'
     },
-    '06': {
+    '07': {
       title: 'Coherence, the Operator, and Neverlost',
       hash: '#coherence-operator-neverlost',
       src: '../../assets/audio/part-iv/06-coherence-operator-neverlost.mp3'
     }
   };
-
-  // Keep the canonical audio path for section 04 explicit.
-  TRACKS['04'].src = '../../assets/audio/part-iv/04-organizational-coherence-demonstrated-value.mp3';
 
   const HASH_TO_TRACK = Object.fromEntries(
     Object.entries(TRACKS).map(([track, data]) => [data.hash, track])
@@ -63,13 +67,8 @@ if (button && links) {
 
   const writeStoredState = (state) => {
     try {
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
-        ...state,
-        savedAt: Date.now()
-      }));
-    } catch (_) {
-      // The pages still work without session storage; only cross-page handoff is lost.
-    }
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ ...state, savedAt: Date.now() }));
+    } catch (_) {}
   };
 
   const trackFromCard = (card) => {
@@ -123,7 +122,7 @@ if (button && links) {
       const panel = card.querySelector('.inline-reader-panel');
       const link = card.querySelector('a[href*="read/part-iv/"]');
       if (panel) panel.hidden = true;
-      if (link) setLinkState(link, false);
+      if (link && card.querySelector('audio')) setLinkState(link, false);
     };
 
     const closeOtherReaders = (activeCard) => {
@@ -162,7 +161,7 @@ if (button && links) {
         toolbar.innerHTML = `
           <div>
             <div class="inline-reader-kicker">Read along · Section ${track}</div>
-            <div class="inline-reader-helper">The text below matches the recording above.</div>
+            <div class="inline-reader-helper">The text below matches this reading section.</div>
           </div>
           <button class="inline-reader-close" type="button" aria-label="Close reader">Close</button>
         `;
@@ -171,7 +170,7 @@ if (button && links) {
         body.className = 'inline-reader-body';
 
         let node = sourceHeading;
-        while (node && node.tagName !== 'HR') {
+        while (node && node.tagName !== 'HR' && !node.classList.contains('meta-box')) {
           body.appendChild(node.cloneNode(true));
           node = node.nextElementSibling;
         }
@@ -188,7 +187,6 @@ if (button && links) {
         closeOtherReaders(card);
         setLinkState(link, true);
       } catch (_) {
-        // Preserve the existing full-reader link as a reliable fallback.
         window.location.href = link.href;
       } finally {
         link.removeAttribute('aria-busy');
@@ -200,17 +198,16 @@ if (button && links) {
       const audio = card.querySelector('audio');
       const track = trackFromCard(card);
       const readerLink = card.querySelector('a[href*="read/part-iv/"]');
-      if (!audio || !track) return;
+      if (!track) return;
 
-      audio.addEventListener('play', () => {
-        lastActiveCard = card;
-      });
+      if (audio) {
+        audio.addEventListener('play', () => { lastActiveCard = card; });
+        audio.addEventListener('timeupdate', () => {
+          if (audio.currentTime > 0) lastActiveCard = card;
+        });
+      }
 
-      audio.addEventListener('timeupdate', () => {
-        if (audio.currentTime > 0) lastActiveCard = card;
-      });
-
-      if (readerLink) {
+      if (readerLink && audio) {
         setLinkState(readerLink, false);
         readerLink.addEventListener('click', (event) => {
           event.preventDefault();
@@ -225,17 +222,14 @@ if (button && links) {
       }
     });
 
-    // The hero and bottom full-reader links still open the dedicated reader page.
     document.querySelectorAll('a[href*="read/part-iv/"]').forEach((readerLink) => {
       if (readerLink.closest('.audio-card')) return;
       readerLink.addEventListener('click', () => {
         const card = lastActiveCard;
         if (!card) return;
-
         const audio = card.querySelector('audio');
         const track = trackFromCard(card);
         if (!audio || !track) return;
-
         writeStoredState({
           track,
           currentTime: Number.isFinite(audio.currentTime) ? audio.currentTime : 0,
@@ -297,7 +291,7 @@ if (button && links) {
     let lastSavedSecond = -1;
 
     const persistPlayerState = () => {
-      if (!activeTrack) return;
+      if (!activeTrack || !TRACKS[activeTrack].src) return;
       writeStoredState({
         track: activeTrack,
         currentTime: Number.isFinite(player.currentTime) ? player.currentTime : 0,
@@ -307,16 +301,24 @@ if (button && links) {
 
     const loadTrack = (track, startTime = 0, shouldResume = false) => {
       if (!TRACKS[track]) return;
-
       activeTrack = track;
       lastSavedSecond = -1;
       const data = TRACKS[track];
       title.textContent = `${track} · ${data.title}`;
+
+      player.pause();
+      if (!data.src) {
+        player.removeAttribute('src');
+        player.load();
+        player.hidden = true;
+        status.textContent = data.pending || 'Audio coming soon';
+        return;
+      }
+
+      player.hidden = false;
       status.textContent = startTime > 1
         ? `Continue from ${formatTime(startTime)}`
         : 'Audio for this reading section';
-
-      player.pause();
       player.src = data.src;
       player.load();
 
@@ -324,15 +326,10 @@ if (button && links) {
         if (startTime > 0 && Number.isFinite(player.duration)) {
           player.currentTime = Math.min(startTime, Math.max(0, player.duration - 0.25));
         }
-
         if (shouldResume) {
           player.play()
-            .then(() => {
-              status.textContent = `Playing from ${formatTime(player.currentTime)}`;
-            })
-            .catch(() => {
-              status.textContent = `Press play to continue from ${formatTime(player.currentTime)}`;
-            });
+            .then(() => { status.textContent = `Playing from ${formatTime(player.currentTime)}`; })
+            .catch(() => { status.textContent = `Press play to continue from ${formatTime(player.currentTime)}`; });
         }
       }, { once: true });
     };
@@ -342,13 +339,11 @@ if (button && links) {
     const hashTrack = HASH_TO_TRACK[window.location.hash];
     const stored = readStoredState();
     const storedIsFresh = stored && (Date.now() - (stored.savedAt || 0) < 6 * 60 * 60 * 1000);
-
     const initialTrack = (queryTrack && TRACKS[queryTrack] && queryTrack)
       || hashTrack
       || (storedIsFresh && stored.track)
       || '01';
-
-    const canResumeStored = storedIsFresh && stored.track === initialTrack;
+    const canResumeStored = storedIsFresh && stored.track === initialTrack && TRACKS[initialTrack].src;
     loadTrack(
       initialTrack,
       canResumeStored ? Number(stored.currentTime) || 0 : 0,
@@ -359,7 +354,7 @@ if (button && links) {
       navLink.addEventListener('click', () => {
         const track = HASH_TO_TRACK[navLink.getAttribute('href')];
         if (!track || track === activeTrack) return;
-        const keepPlaying = !player.paused && !player.ended;
+        const keepPlaying = Boolean(TRACKS[activeTrack]?.src) && !player.paused && !player.ended;
         loadTrack(track, 0, keepPlaying);
       });
     });
@@ -368,14 +363,10 @@ if (button && links) {
       status.textContent = 'Playing · follow the section below';
       persistPlayerState();
     });
-
     player.addEventListener('pause', () => {
-      if (!player.ended) {
-        status.textContent = `Paused at ${formatTime(player.currentTime)}`;
-      }
+      if (!player.ended && TRACKS[activeTrack]?.src) status.textContent = `Paused at ${formatTime(player.currentTime)}`;
       persistPlayerState();
     });
-
     player.addEventListener('timeupdate', () => {
       const wholeSecond = Math.floor(player.currentTime || 0);
       if (wholeSecond !== lastSavedSecond && wholeSecond % 3 === 0) {
@@ -383,7 +374,6 @@ if (button && links) {
         persistPlayerState();
       }
     });
-
     player.addEventListener('ended', () => {
       status.textContent = 'Section complete · choose the next section above';
       persistPlayerState();
