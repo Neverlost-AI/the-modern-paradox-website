@@ -47,4 +47,4 @@ Not included yet:
 - database
 - moderation backend
 
-Those should be added only after real reader/classroom use provides evidence that they are needed.
+Those should be added only after real reader use provides evidence that they are needed.

@@ -20,6 +20,14 @@ if (button && links) {
   button.addEventListener('click', () => {
     const open = links.classList.toggle('open');
     button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    button.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape' || !links.classList.contains('open')) return;
+    links.classList.remove('open');
+    button.setAttribute('aria-expanded', 'false');
+    button.setAttribute('aria-label', 'Open navigation');
+    button.focus();
   });
 }
 

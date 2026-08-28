@@ -65,12 +65,16 @@
   color:var(--ink);
 }
 
+.read-along-back:focus-visible{
+  color:var(--ink);
+}
+
 @media(max-width:820px){
   .read-along-inner{
     width:calc(100% - 38px);
     grid-template-columns:1fr;
-    gap:7px;
-    padding:9px 0 11px;
+    gap:8px;
+    padding:10px 0 12px;
   }
 
   .read-along-title{
@@ -83,6 +87,6 @@
   }
 
   .read-along-audio{
-    height:34px;
+    height:38px;
   }
 }
