@@ -24,44 +24,71 @@ if (button && links) {
 }
 
 (() => {
-  const STORAGE_KEY = 'tmp-part-iv-read-along';
-  const TRACKS = {
-    '01': {
-      title: 'The Modern Übermensch and Systems',
-      hash: '#modern-ubermensch-and-systems',
-      src: '../../assets/audio/part-iv/01-modern-ubermensch-and-systems.mp3'
-    },
-    '02': {
-      title: 'The Übermensch as Operator',
-      hash: '#ubermensch-as-operator',
-      src: '../../assets/audio/part-iv/02-ubermensch-as-operator.mp3'
-    },
-    '03': {
-      title: 'The Window Before the System Hardens',
-      hash: '#window-before-system-hardens',
-      src: '../../assets/audio/part-iv/03-window-before-the-system-hardens.mp3'
-    },
-    '04': {
-      title: 'The Operator',
-      hash: '#the-operator',
-      src: '../../assets/audio/part-iv/04-the-operator.mp3'
-    },
-    '05': {
-      title: 'The Hospital',
-      hash: '#the-hospital',
-      src: '../../assets/audio/part-iv/05-the-hospital.mp3'
-    },
-    '06': {
-      title: 'Consciousness and Reorganization',
-      hash: '#consciousness-reorganization',
-      src: '../../assets/audio/part-iv/06-consciousness-and-reorganization.mp3'
-    },
-    '07': {
-      title: 'The Part and the System',
-      hash: '#part-and-system',
-      src: '../../assets/audio/part-iv/07-the-part-and-the-system.mp3'
+  const PART_IV_CONFIG = {
+    storageKey: 'tmp-part-iv-read-along',
+    readerUrl: '../read/part-iv/',
+    readerLinkSelector: 'a[href*="read/part-iv/"]',
+    backUrl: '../../part-iv/',
+    tracks: {
+      '01': {
+        title: 'The Modern Übermensch and Systems',
+        hash: '#modern-ubermensch-and-systems',
+        src: '../../assets/audio/part-iv/01-modern-ubermensch-and-systems.mp3'
+      },
+      '02': {
+        title: 'The Übermensch as Operator',
+        hash: '#ubermensch-as-operator',
+        src: '../../assets/audio/part-iv/02-ubermensch-as-operator.mp3'
+      },
+      '03': {
+        title: 'The Window Before the System Hardens',
+        hash: '#window-before-system-hardens',
+        src: '../../assets/audio/part-iv/03-window-before-the-system-hardens.mp3'
+      },
+      '04': {
+        title: 'The Operator',
+        hash: '#the-operator',
+        src: '../../assets/audio/part-iv/04-the-operator.mp3'
+      },
+      '05': {
+        title: 'The Hospital',
+        hash: '#the-hospital',
+        src: '../../assets/audio/part-iv/05-the-hospital.mp3'
+      },
+      '06': {
+        title: 'Consciousness and Reorganization',
+        hash: '#consciousness-reorganization',
+        src: '../../assets/audio/part-iv/06-consciousness-and-reorganization.mp3'
+      },
+      '07': {
+        title: 'The Part and the System',
+        hash: '#part-and-system',
+        src: '../../assets/audio/part-iv/07-the-part-and-the-system.mp3'
+      }
     }
   };
+
+  const readPageConfig = () => {
+    const element = document.getElementById('read-along-config');
+    if (!element) return PART_IV_CONFIG;
+    try {
+      const config = JSON.parse(element.textContent);
+      if (!config.storageKey || !config.readerUrl || !config.readerLinkSelector || !config.backUrl || !config.tracks) {
+        throw new Error('Read-along configuration is incomplete');
+      }
+      return config;
+    } catch (error) {
+      console.error('Unable to initialize read-along configuration', error);
+      return null;
+    }
+  };
+
+  const CONFIG = readPageConfig();
+  if (!CONFIG) return;
+
+  const STORAGE_KEY = CONFIG.storageKey;
+  const TRACKS = CONFIG.tracks;
+  const READER_LINK_SELECTOR = CONFIG.readerLinkSelector;
 
   const HASH_TO_TRACK = Object.fromEntries(
     Object.entries(TRACKS).map(([track, data]) => [data.hash, track])
@@ -116,7 +143,7 @@ if (button && links) {
 
     const getReaderDocument = () => {
       if (!readerDocumentPromise) {
-        const readerUrl = new URL('../read/part-iv/', window.location.href);
+        const readerUrl = new URL(CONFIG.readerUrl, window.location.href);
         readerDocumentPromise = fetch(readerUrl, { credentials: 'same-origin' })
           .then((response) => {
             if (!response.ok) throw new Error(`Reader request failed: ${response.status}`);
@@ -134,7 +161,7 @@ if (button && links) {
 
     const closeInlineReader = (card) => {
       const panel = card.querySelector('.inline-reader-panel');
-      const link = card.querySelector('a[href*="read/part-iv/"]');
+      const link = card.querySelector(READER_LINK_SELECTOR);
       if (panel) panel.hidden = true;
       if (link && card.querySelector('audio')) setLinkState(link, false);
     };
@@ -211,7 +238,7 @@ if (button && links) {
     cards.forEach((card) => {
       const audio = card.querySelector('audio');
       const track = trackFromCard(card);
-      const readerLink = card.querySelector('a[href*="read/part-iv/"]');
+      const readerLink = card.querySelector(READER_LINK_SELECTOR);
       if (!track) return;
 
       if (audio) {
@@ -236,7 +263,7 @@ if (button && links) {
       }
     });
 
-    document.querySelectorAll('a[href*="read/part-iv/"]').forEach((readerLink) => {
+    document.querySelectorAll(READER_LINK_SELECTOR).forEach((readerLink) => {
       if (readerLink.closest('.audio-card')) return;
       readerLink.addEventListener('click', () => {
         const card = lastActiveCard;
@@ -277,7 +304,7 @@ if (button && links) {
         <audio class="read-along-audio" controls preload="metadata" data-read-along-audio>
           Your browser does not support the audio element.
         </audio>
-        <a class="read-along-back" href="../../part-iv/">Audio sections →</a>
+        <a class="read-along-back" href="${CONFIG.backUrl}">Audio sections →</a>
       </div>
     `;
     readerNav.insertAdjacentElement('afterend', shell);

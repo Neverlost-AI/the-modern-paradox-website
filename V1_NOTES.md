@@ -1,11 +1,10 @@
 # V1 Editorial / Product Notes
 
 ## Core launch idea
-Part IV is the first substantial public destination. It gives visitors a low-friction way to:
+Part I is the earliest published manuscript destination, followed by Part IV. Together they give visitors a low-friction way to:
 1. listen to one short section,
 2. read the same argument,
-3. move into teaching/criticism,
-4. discover Neverlost Systems only if they want the applied systems connection.
+3. discover Neverlost Systems only if they want the applied systems connection.
 
 ## Intended bridge from NeverlostSystems.com
 The approved Neverlost Systems Part IV section should link its:
@@ -33,7 +32,6 @@ The site follows the approved Modern Paradox direction:
 - the intersection symbol remains the intended primary symbol
 - a provisional corrected intersection mark is saved in Canva
 - rejected traced/hand-built SVG attempts are intentionally excluded from the website bundle
-- the spiral is reserved for Neverlost Academy
 - Neverlost Systems retains its separate visual identity
 
 The exact production intersection asset can be swapped in later without changing the site architecture.
