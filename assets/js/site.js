@@ -135,6 +135,142 @@ if (button && links) {
     document.head.appendChild(stylesheet);
   };
 
+  const formatTime = (seconds) => {
+    const value = Math.max(0, Math.floor(seconds || 0));
+    const minutes = Math.floor(value / 60);
+    const remainder = String(value % 60).padStart(2, '0');
+    return `${minutes}:${remainder}`;
+  };
+
+  const enhanceAudioPlayer = (audio, label = 'Audio') => {
+    if (!audio || audio.dataset.customPlayer === 'true') {
+      return audio?.closest('.custom-audio-player') || null;
+    }
+
+    const shell = document.createElement('div');
+    shell.className = 'custom-audio-player';
+    shell.setAttribute('role', 'group');
+    shell.setAttribute('aria-label', `${label} audio player`);
+    shell.innerHTML = `
+      <button class="audio-toggle" type="button" aria-label="Play ${label}">
+        <span aria-hidden="true">▶</span>
+      </button>
+      <div class="audio-timeline">
+        <input class="audio-range audio-progress" type="range" min="0" max="0" step="0.1" value="0" aria-label="Seek in ${label}" aria-valuetext="0:00 of 0:00">
+        <span class="audio-time" aria-hidden="true"><span data-elapsed>0:00</span><span>/</span><span data-duration>0:00</span></span>
+      </div>
+      <div class="audio-volume">
+        <button class="audio-mute" type="button" aria-label="Mute ${label}">Mute</button>
+        <input class="audio-range audio-volume-range" type="range" min="0" max="1" step="0.05" value="1" aria-label="Volume for ${label}">
+      </div>
+    `;
+
+    audio.replaceWith(shell);
+    shell.prepend(audio);
+    audio.controls = false;
+    audio.classList.add('custom-audio-source');
+    audio.dataset.customPlayer = 'true';
+
+    const toggle = shell.querySelector('.audio-toggle');
+    const toggleIcon = toggle.querySelector('span');
+    const progress = shell.querySelector('.audio-progress');
+    const elapsed = shell.querySelector('[data-elapsed]');
+    const duration = shell.querySelector('[data-duration]');
+    const mute = shell.querySelector('.audio-mute');
+    const volume = shell.querySelector('.audio-volume-range');
+
+    const updatePlayState = () => {
+      const playing = !audio.paused && !audio.ended;
+      toggleIcon.textContent = playing ? '❚❚' : '▶';
+      toggle.setAttribute('aria-label', `${playing ? 'Pause' : 'Play'} ${label}`);
+    };
+
+    const updateTime = () => {
+      const currentTime = Number.isFinite(audio.currentTime) ? audio.currentTime : 0;
+      const totalTime = Number.isFinite(audio.duration) ? audio.duration : 0;
+      progress.max = String(totalTime);
+      progress.value = String(Math.min(currentTime, totalTime));
+      progress.disabled = totalTime <= 0;
+      progress.style.setProperty('--range-progress', `${totalTime > 0 ? (currentTime / totalTime) * 100 : 0}%`);
+      progress.setAttribute('aria-valuetext', `${formatTime(currentTime)} of ${formatTime(totalTime)}`);
+      elapsed.textContent = formatTime(currentTime);
+      duration.textContent = formatTime(totalTime);
+    };
+
+    const updateVolume = () => {
+      const audibleVolume = audio.muted ? 0 : audio.volume;
+      volume.value = String(audibleVolume);
+      volume.style.setProperty('--range-progress', `${audibleVolume * 100}%`);
+      mute.textContent = audio.muted || audio.volume === 0 ? 'Unmute' : 'Mute';
+      mute.setAttribute('aria-label', `${audio.muted || audio.volume === 0 ? 'Unmute' : 'Mute'} ${label}`);
+    };
+
+    toggle.addEventListener('click', () => {
+      if (audio.paused || audio.ended) {
+        audio.play().catch(() => {});
+      } else {
+        audio.pause();
+      }
+    });
+    progress.addEventListener('input', () => {
+      if (Number.isFinite(audio.duration)) audio.currentTime = Number(progress.value);
+    });
+    progress.addEventListener('keydown', (event) => {
+      if (!Number.isFinite(audio.duration)) return;
+      const keys = {
+        ArrowLeft: Math.max(0, audio.currentTime - 5),
+        ArrowDown: Math.max(0, audio.currentTime - 5),
+        ArrowRight: Math.min(audio.duration, audio.currentTime + 5),
+        ArrowUp: Math.min(audio.duration, audio.currentTime + 5),
+        Home: 0,
+        End: audio.duration
+      };
+      if (!(event.key in keys)) return;
+      event.preventDefault();
+      audio.currentTime = keys[event.key];
+      updateTime();
+    });
+    mute.addEventListener('click', () => {
+      if (audio.muted || audio.volume === 0) {
+        audio.muted = false;
+        if (audio.volume === 0) audio.volume = 1;
+      } else {
+        audio.muted = true;
+      }
+    });
+    volume.addEventListener('input', () => {
+      audio.volume = Number(volume.value);
+      audio.muted = false;
+    });
+    volume.addEventListener('keydown', (event) => {
+      const keys = {
+        ArrowLeft: Math.max(0, audio.volume - 0.05),
+        ArrowDown: Math.max(0, audio.volume - 0.05),
+        ArrowRight: Math.min(1, audio.volume + 0.05),
+        ArrowUp: Math.min(1, audio.volume + 0.05),
+        Home: 0,
+        End: 1
+      };
+      if (!(event.key in keys)) return;
+      event.preventDefault();
+      audio.volume = keys[event.key];
+      audio.muted = false;
+    });
+
+    audio.addEventListener('play', updatePlayState);
+    audio.addEventListener('pause', updatePlayState);
+    audio.addEventListener('ended', updatePlayState);
+    audio.addEventListener('loadedmetadata', updateTime);
+    audio.addEventListener('durationchange', updateTime);
+    audio.addEventListener('timeupdate', updateTime);
+    audio.addEventListener('volumechange', updateVolume);
+
+    updatePlayState();
+    updateTime();
+    updateVolume();
+    return shell;
+  };
+
   const setupListeningPageHandoff = () => {
     const cards = Array.from(document.querySelectorAll('.audio-card'));
     if (!cards.length) return;
@@ -250,6 +386,7 @@ if (button && links) {
       if (!track) return;
 
       if (audio) {
+        enhanceAudioPlayer(audio, TRACKS[track]?.title || `Section ${track}`);
         audio.addEventListener('play', () => { lastActiveCard = card; });
         audio.addEventListener('timeupdate', () => {
           if (audio.currentTime > 0) lastActiveCard = card;
@@ -321,6 +458,7 @@ if (button && links) {
     const title = shell.querySelector('[data-read-along-title]');
     const status = shell.querySelector('[data-read-along-status]');
     const backLink = shell.querySelector('.read-along-back');
+    const customPlayer = enhanceAudioPlayer(player, 'Read-along');
 
     const syncStickyOffset = () => {
       const navTop = parseFloat(getComputedStyle(readerNav).top) || 0;
@@ -328,13 +466,6 @@ if (button && links) {
     };
     syncStickyOffset();
     window.addEventListener('resize', syncStickyOffset);
-
-    const formatTime = (seconds) => {
-      const value = Math.max(0, Math.floor(seconds || 0));
-      const minutes = Math.floor(value / 60);
-      const remainder = String(value % 60).padStart(2, '0');
-      return `${minutes}:${remainder}`;
-    };
 
     let activeTrack = null;
     let lastSavedSecond = -1;
@@ -359,12 +490,12 @@ if (button && links) {
       if (!data.src) {
         player.removeAttribute('src');
         player.load();
-        player.hidden = true;
+        customPlayer.hidden = true;
         status.textContent = data.pending || 'Audio coming soon';
         return;
       }
 
-      player.hidden = false;
+      customPlayer.hidden = false;
       status.textContent = startTime > 1
         ? `Continue from ${formatTime(startTime)}`
         : 'Audio for this reading section';
