@@ -1,6 +1,6 @@
-# Part IV web audio
+# Part V web audio
 
-Part IV uses the final canonical seven-track structure:
+Part V — The Operator uses the final canonical seven-track structure. The public MP3 files remain in the legacy `part-iv` asset directory so existing URLs continue to work:
 
 1. `01-modern-ubermensch-and-systems.mp3` — The Modern Übermensch and Systems
 2. `02-ubermensch-as-operator.mp3` — The Übermensch as Operator
@@ -10,7 +10,7 @@ Part IV uses the final canonical seven-track structure:
 6. `06-consciousness-and-reorganization.mp3` — Consciousness and Reorganization
 7. `07-the-part-and-the-system.mp3` — The Part and the System
 
-These files correspond exactly to:
+These files correspond exactly to the legacy-titled source documents:
 
 - `MODERN_PARADOX_PART_IV_MASTER_FINAL_2026-08-26.md`
 - `MODERN_PARADOX_PART_IV_SEVEN_SECTION_MAP_FINAL_2026-08-26.md`

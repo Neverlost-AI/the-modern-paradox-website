@@ -1,16 +1,18 @@
 # V1 Editorial / Product Notes
 
 ## Core launch idea
-Part I is the earliest published manuscript destination, followed by Part IV. Together they give visitors a low-friction way to:
+Part I is the earliest published manuscript destination, followed by Part V. Together they give visitors a low-friction way to:
 1. listen to one short section,
 2. read the same argument,
 3. discover Neverlost Systems only if they want the applied systems connection.
 
 ## Intended bridge from NeverlostSystems.com
-The approved Neverlost Systems Part IV section should link its:
-`Explore Part IV: The Operator →`
+The approved Neverlost Systems Operator section may continue linking its legacy:
+`Explore Part V: The Operator →`
 button to:
 `https://themodernparadox.com/part-iv/`
+
+The clean `/part-v/` route is also available. The legacy `/part-iv/` URL remains live so existing public links do not break.
 
 ## Reader model
 The reader is HTML, not PDF-only. This makes section links stable and lets each audio card jump to the relevant text.
@@ -21,7 +23,7 @@ A printable/shareable PDF can still be added later as a secondary format.
 The first release does not open anonymous comments. The site explains the kind of feedback sought, while leaving the public response mechanism deferred until privacy, moderation, and academic-use needs are clearer.
 
 ## Editorial caution
-The reader page preserves the Part IV manuscript wording. The surrounding website copy is framing copy and should remain visibly distinct from the manuscript itself.
+The reader page preserves the Operator manuscript wording while presenting it within the corrected Part V architecture. The surrounding website copy is framing copy and should remain visibly distinct from the manuscript itself.
 
 
 ## Visual identity revision

@@ -16,27 +16,57 @@
 
 const button = document.querySelector('.menu-button');
 const links = document.querySelector('.nav-links');
+const partsMenus = Array.from(document.querySelectorAll('.parts-menu'));
 if (button && links) {
+  const closeNavigation = ({ restoreFocus = false } = {}) => {
+    links.classList.remove('open');
+    button.setAttribute('aria-expanded', 'false');
+    button.setAttribute('aria-label', 'Open navigation');
+    partsMenus.forEach((menu) => { menu.open = false; });
+    if (restoreFocus) button.focus();
+  };
+
   button.addEventListener('click', () => {
     const open = links.classList.toggle('open');
     button.setAttribute('aria-expanded', open ? 'true' : 'false');
     button.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
+    if (!open) partsMenus.forEach((menu) => { menu.open = false; });
   });
+
+  links.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => closeNavigation());
+  });
+
   document.addEventListener('keydown', (event) => {
-    if (event.key !== 'Escape' || !links.classList.contains('open')) return;
-    links.classList.remove('open');
-    button.setAttribute('aria-expanded', 'false');
-    button.setAttribute('aria-label', 'Open navigation');
-    button.focus();
+    if (event.key !== 'Escape') return;
+    const hadOpenMenu = partsMenus.some((menu) => menu.open);
+    const hadOpenNavigation = links.classList.contains('open');
+    if (!hadOpenMenu && !hadOpenNavigation) return;
+    closeNavigation({ restoreFocus: hadOpenNavigation });
   });
 }
 
+partsMenus.forEach((menu) => {
+  menu.addEventListener('toggle', () => {
+    if (!menu.open) return;
+    partsMenus.forEach((otherMenu) => {
+      if (otherMenu !== menu) otherMenu.open = false;
+    });
+  });
+});
+
+document.addEventListener('click', (event) => {
+  partsMenus.forEach((menu) => {
+    if (menu.open && !menu.contains(event.target)) menu.open = false;
+  });
+});
+
 (() => {
-  const PART_IV_CONFIG = {
-    storageKey: 'tmp-part-iv-read-along',
+  const PART_V_CONFIG = {
+    storageKey: 'tmp-part-v-read-along',
     readerUrl: '../read/part-iv/',
-    readerLinkSelector: 'a[href*="read/part-iv/"]',
-    backUrl: '../../part-iv/',
+    readerLinkSelector: 'a[href*="read/part-v/"]',
+    backUrl: '../../part-v/',
     tracks: {
       '01': {
         title: 'The Modern Übermensch and Systems',
@@ -78,7 +108,7 @@ if (button && links) {
 
   const readPageConfig = () => {
     const element = document.getElementById('read-along-config');
-    if (!element) return PART_IV_CONFIG;
+    if (!element) return PART_V_CONFIG;
     try {
       const config = JSON.parse(element.textContent);
       if (!config.storageKey || !config.readerUrl || !config.readerLinkSelector || !config.backUrl || !config.tracks) {
@@ -565,4 +595,77 @@ if (button && links) {
 
   setupListeningPageHandoff();
   setupReader();
+})();
+
+(() => {
+  const contactOpeners = Array.from(document.querySelectorAll('[data-contact-open]'));
+  if (!contactOpeners.length) return;
+
+  const contactDialog = document.createElement('dialog');
+  contactDialog.className = 'contact-dialog';
+  contactDialog.setAttribute('aria-labelledby', 'contact-dialog-title');
+  contactDialog.innerHTML = `
+    <div class="contact-dialog-inner">
+      <button class="contact-dialog-close" type="button" aria-label="Close contact form">×</button>
+      <p class="eyebrow">Contact / Manuscript Inquiry</p>
+      <h2 id="contact-dialog-title">Continue the conversation.</h2>
+      <p class="contact-dialog-intro">For academic discussion, conference collaboration, publishing inquiries, philosophical correspondence, or requests concerning the complete manuscript.</p>
+      <form class="contact-form" action="https://formsubmit.co/neverlostsells@gmail.com" method="POST">
+        <input type="hidden" name="_subject" value="New Modern Paradox manuscript inquiry">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_next" value="https://themodernparadox.com/?sent=1#manuscript">
+        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+        <div class="contact-form-row">
+          <label>Name
+            <input type="text" name="name" autocomplete="name" required>
+          </label>
+          <label>Email
+            <input type="email" name="email" autocomplete="email" required>
+          </label>
+        </div>
+        <label>Organization / Affiliation <span style="font-weight:500;color:var(--muted);">(optional)</span>
+          <input type="text" name="organization" autocomplete="organization">
+        </label>
+        <label>Subject
+          <select name="subject" required>
+            <option value="" selected disabled>Select a topic</option>
+            <option>Academic discussion</option>
+            <option>Conference collaboration</option>
+            <option>Publishing / manuscript inquiry</option>
+            <option>Philosophical correspondence</option>
+            <option>Request concerning the complete manuscript</option>
+            <option>Other</option>
+          </select>
+        </label>
+        <label>Message
+          <textarea name="message" required></textarea>
+        </label>
+        <button class="button primary" type="submit">Send message</button>
+        <p class="contact-form-note">Please do not submit sensitive medical, legal, financial, or other private records through this form.</p>
+      </form>
+    </div>
+  `;
+  document.body.appendChild(contactDialog);
+
+  const contactClose = contactDialog.querySelector('.contact-dialog-close');
+  let lastContactOpener = null;
+
+  contactOpeners.forEach((opener) => {
+    opener.addEventListener('click', (event) => {
+      event.preventDefault();
+      lastContactOpener = opener;
+      contactDialog.showModal();
+      contactClose.focus();
+    });
+  });
+
+  contactClose.addEventListener('click', () => contactDialog.close());
+
+  contactDialog.addEventListener('click', (event) => {
+    if (event.target === contactDialog) contactDialog.close();
+  });
+
+  contactDialog.addEventListener('close', () => {
+    if (lastContactOpener?.isConnected) lastContactOpener.focus();
+  });
 })();

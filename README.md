@@ -2,19 +2,25 @@
 
 Static website for `themodernparadox.com`.
 
-## V1 structure
+## Site structure
 
 - `/` — Home
-- `/part-i/` — Part I audio hub with nine public MP3 sections
+- `/part-i/` — Part I audio hub with seven public MP3 sections
 - `/read/part-i/` — continuous Part I reader with section anchors
-- `/part-iv/` — Part IV audio hub with seven MP3 sections
-- `/read/part-iv/` — continuous Part IV reader with section anchors
+- `/part-v/` — clean alias for the public Part V audio hub
+- `/read/part-v/` — clean alias for the public Part V reader
+- `/part-iv/` — retained legacy route for the Part V audio hub
+- `/read/part-iv/` — retained legacy route for the Part V reader
 - `/respond/` — structured response model; public submission infrastructure intentionally deferred
 - `/about/` — manuscript/project context
 
+The complete manuscript has five parts. Parts I and V are public. Parts II–IV remain unpublished and are represented only by titles, descriptions, and status labels; no private manuscript prose is served by the site.
+
+The Contact / Manuscript Inquiry dialog follows the Neverlost Systems implementation: native browser validation, FormSubmit delivery, a hidden honeypot field, and a post-submission redirect. It does not expose credentials in client-side code.
+
 ## Audio
 
-The site is wired to nine Part I MP3s in `assets/audio/part-i/` and seven Part IV MP3s in `assets/audio/part-iv/`. The binary MP3 files are prepared locally from the WAV masters at 96 kbps mono. See each audio folder README for the exact filenames.
+The site is wired to seven Part I MP3s in `assets/audio/part-i/` and seven Part V MP3s in the legacy `assets/audio/part-iv/` directory. The binary MP3 files are prepared locally from the WAV masters at 96 kbps mono. See each audio folder README for the exact filenames.
 
 The WAV masters remain outside the public website repository.
 
