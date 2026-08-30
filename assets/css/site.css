@@ -459,7 +459,7 @@ audio{width:100%;height:40px}
   margin:auto;
 }
 .reader{
-  width:min(var(--reader),calc(100% - 64px));
+  width:min(900px,calc(100% - 64px));
   margin:auto;
   padding:78px 0 110px;
 }
