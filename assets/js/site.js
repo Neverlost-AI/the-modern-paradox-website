@@ -1,5 +1,5 @@
 (() => {
-  const GA_MEASUREMENT_ID = 'G-YY1X09PG3W';
+  const GA_MEASUREMENT_ID = 'G-P5HWWCW8F4';
   window.dataLayer = window.dataLayer || [];
   window.gtag = window.gtag || function gtag() { window.dataLayer.push(arguments); };
 
