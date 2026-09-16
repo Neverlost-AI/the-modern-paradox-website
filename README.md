@@ -1,56 +1,103 @@
-# The Modern Paradox Website — V1
+# The Modern Paradox Website
 
-Static website for `themodernparadox.com`.
+Public source for **[themodernparadox.com](https://themodernparadox.com/)**.
 
-## Site structure
+The Modern Paradox is a five-part philosophical manuscript about how reality is seen, held, embodied, and carried while values and interpretations remain revisable and no part becomes the whole.
 
-- `/` — Home
-- `/part-i/` — Part I audio hub with seven public MP3 sections
-- `/read/part-i/` — continuous Part I reader with section anchors
-- `/part-v/` — clean alias for the public Part V audio hub
-- `/read/part-v/` — clean alias for the public Part V reader
-- `/part-iv/` — retained legacy route for the Part V audio hub
-- `/read/part-iv/` — retained legacy route for the Part V reader
-- `/respond/` — structured response model; public submission infrastructure intentionally deferred
-- `/about/` — manuscript/project context
+## Current public experience
 
-The complete manuscript has five parts. Parts I and V are public. Parts II–IV remain unpublished and are represented only by titles, descriptions, and status labels; no private manuscript prose is served by the site.
+Parts **I** and **V** are currently published on the site. Parts II–IV remain unpublished and are represented publicly only by titles, descriptions, and manuscript-status context.
 
-The Contact / Manuscript Inquiry dialog follows the Neverlost Systems implementation: native browser validation, FormSubmit delivery, a hidden honeypot field, and a post-submission redirect. It does not expose credentials in client-side code.
+The site now includes:
 
-## Audio
+- continuous HTML readers for Parts I and V;
+- **14 public section recordings** — seven for Part I and seven for Part V;
+- section-level **Read along** links between audio and text;
+- session-based handoff so listening/reading state can carry between the audio hub and reader;
+- custom accessible audio controls with play/pause, seeking, volume, mute, and keyboard interaction;
+- responsive literary/editorial layouts;
+- manuscript inquiry and response pages;
+- GA4 analytics;
+- a custom domain and GitHub Pages-oriented static deployment structure.
 
-The site is wired to seven Part I MP3s in `assets/audio/part-i/` and seven Part V MP3s in the legacy `assets/audio/part-iv/` directory. The binary MP3 files are prepared locally from the WAV masters at 96 kbps mono. See each audio folder README for the exact filenames.
+## Manuscript structure
 
-The WAV masters remain outside the public website repository.
+1. **Part I — Reality Must Be Held** — public
+2. **Part II — Recognition Is Not Implementation** — unpublished manuscript
+3. **Part III — The Cost of Coherence** — unpublished manuscript
+4. **Part IV — The Cost of Carrying** — unpublished manuscript
+5. **Part V — The Operator** — public
+
+The public website does not serve the unpublished prose for Parts II–IV.
+
+## Public routes
+
+- `/` — home and five-part manuscript architecture
+- `/part-i/` — Part I audio hub
+- `/read/part-i/` — continuous Part I reader
+- `/part-v/` — public Part V route
+- `/read/part-v/` — continuous Part V reader
+- `/respond/` — response framework
+- `/about/` — project and manuscript context
+
+The repository still retains legacy `part-iv` implementation paths underneath the clean Part V public routes for compatibility with the earlier site structure.
+
+## Audio and read-along behavior
+
+### Part I
+
+Seven recordings correspond to the seven public Part I sections, from **Before the Paradox** through **Making the Unconscious Conscious**.
+
+### Part V
+
+Seven recordings correspond to the seven public Part V movements, from **The Modern Übermensch and Systems** through **The Part and the System**.
+
+The shared site JavaScript enhances native audio elements with custom accessible controls and stores bounded read-along state in `sessionStorage`. That allows a reader to move between a section recording and its corresponding text without treating the two experiences as unrelated pages.
+
+## Analytics
+
+The current site initializes **Google Analytics 4** from the shared site JavaScript. Analytics is therefore part of the live implementation; the earlier V1 README statement that analytics was not included is no longer current.
 
 ## Visual identity
 
-The site is intentionally literary/editorial rather than product/SaaS:
+The site remains intentionally literary/editorial rather than product/SaaS-oriented. The current public implementation uses:
 
-- warm cream: `#F7F3E9`
-- near-black ink: `#171512`
-- antique gold: `#A79567`
-- editorial wordmark as the V1 live identity
-- thin rules and centered diamond motifs
-- no card shadows or rounded product UI language
+- warm cream backgrounds;
+- near-black editorial typography;
+- antique-gold accents and rules;
+- approved Modern Paradox lockups and brand assets;
+- restrained page structure instead of dashboard/card-heavy product UI.
 
-The intersection mark remains the intended Modern Paradox symbol. A provisional corrected version is saved in Canva, but rejected traced/hand-built SVG versions are deliberately excluded from this deployment. The exact production mark will be swapped in after a clean master export.
+## Implementation
 
-## GitHub Pages
+This is a static site with no application framework or database requirement:
 
-The repository includes `.nojekyll` and a `CNAME` for `themodernparadox.com`. GitHub Pages and DNS still need to be enabled/configured in repository/domain settings if they are not already active.
+- HTML
+- CSS
+- vanilla JavaScript
+- MP3 audio assets
+- SVG brand assets
+- `.nojekyll`
+- `CNAME`
 
-## V1 boundaries
+## Local preview
 
-Not included yet:
+From the repository root:
 
-- public comments
-- student accounts
-- analytics
-- newsletter
-- CMS
-- database
-- moderation backend
+```bash
+python -m http.server 8000
+```
 
-Those should be added only after real reader use provides evidence that they are needed.
+Then open:
+
+```text
+http://localhost:8000
+```
+
+## Relationship to Neverlost Systems
+
+**The Modern Paradox** is the philosophical and intellectual home of the framework. **[Neverlost Systems](https://neverlostsystems.com/)** is where related ideas are explored through applied systems design, workflow tooling, and governed AI.
+
+## Status
+
+**Live public publishing platform · Parts I and V published · 14-track audio experience · continuous readers and read-along handoff active**
